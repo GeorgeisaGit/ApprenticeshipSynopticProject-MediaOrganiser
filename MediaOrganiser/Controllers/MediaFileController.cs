@@ -34,14 +34,12 @@ namespace MediaOrganiser.Controllers
         /// <param name="minDate">Retrieve all media files after this date, provided in format yyyy-MM-ddThh:mm:ss.SSSZ.</param>
         /// <param name="maxDate">Retrieve all media files before this date, provided in format yyyy-MM-ddThh:mm:ss.SSSZ.</param>
         /// <param name="sort">NameAsc (0) is default, other values are NameDesc (1), DateAsc (2), DateDesc (3)</param>
-        /// <returns></returns>
+        /// <returns>Returns a list of files if content is found, returns 204: No Content if no content found.</returns>
         [HttpGet]
         public IActionResult Get([FromQuery]string fileNames, [FromQuery] string extensions, 
             [FromQuery] string directories, [FromQuery] DateTime? minDate, [FromQuery] DateTime? maxDate, 
             [FromQuery] Sort sort)
         {
-            _logger.LogInformation("{}{}{}{}{}{}", fileNames, extensions, directories, minDate, maxDate, sort);
-            _logger.LogInformation("{}", extensions == null);
             List<MediaFile> mediaFilesList = _service.GetAllMediaFiles(fileNames, extensions, directories, minDate, maxDate, sort);
             if (mediaFilesList.Count < 1)
             {
