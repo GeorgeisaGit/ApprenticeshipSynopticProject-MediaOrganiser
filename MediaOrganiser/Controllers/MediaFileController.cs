@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediaOrganiser.Config;
-using MediaOrganiser.Service;
+using MediaOrganiser.Repository;
+using MediaOrganiser.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,11 @@ namespace MediaOrganiser.Controllers
     {
 
         private readonly ILogger<MediaFileController> _logger;
-
-        public MediaFileController(ILogger<MediaFileController> logger)
+        private MediaService _service;
+        public MediaFileController(ILogger<MediaFileController> logger, MediaService service)
         {
             _logger = logger;
+            _service = service;
         }
         
         [HttpGet]
@@ -28,6 +30,7 @@ namespace MediaOrganiser.Controllers
         {
             _logger.LogInformation("{}{}{}{}{}{}", fileNames, extensions, directories, minDate, maxDate, sort);
             _logger.LogInformation("{}", extensions == null);
+            _service.GetAllMediaFiles(fileNames, extensions, directories, minDate, maxDate, sort);
             return new OkResult();
         }
 

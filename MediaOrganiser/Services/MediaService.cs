@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MediaOrganiser.Config;
+using MediaOrganiser.Models;
 using MediaOrganiser.Repository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace MediaOrganiser.Services
@@ -12,6 +18,14 @@ namespace MediaOrganiser.Services
         {
             _logger = logger;
             _repo = repo;
+        }
+
+        public List<MediaFile> GetAllMediaFiles(string fileNames, string extensions, string directories,
+            DateTime? minDate, DateTime? maxDate, Sort sorting)
+        {
+            List<MediaFile> theList = _repo.GetAllMediaFiles();
+            _logger.LogInformation("{}", theList);
+            return theList;
         }
     }
 }
