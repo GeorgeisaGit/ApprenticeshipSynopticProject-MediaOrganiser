@@ -26,7 +26,9 @@ namespace MediaOrganiser.Controllers
             [FromQuery] string directories, [FromQuery] DateTime? minDate, [FromQuery] DateTime? maxDate, 
             [FromQuery] Sort sort)
         {
-            
+            _logger.LogInformation("{}{}{}{}{}{}", fileNames, extensions, directories, minDate, maxDate, sort);
+            _logger.LogInformation("{}", extensions == null);
+            return new OkResult();
         }
 
         [HttpDelete]
