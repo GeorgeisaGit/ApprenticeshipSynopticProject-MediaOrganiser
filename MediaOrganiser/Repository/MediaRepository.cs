@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using MediaOrganiser.Config;
 using MediaOrganiser.Models;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,12 @@ namespace MediaOrganiser.Repository
         public List<MediaFile> GetAllMediaFiles()
         {
             _logger.LogInformation("{}", _config.RootPath);
+            var arr = Directory.GetFiles(_config.RootPath);
+            foreach (var a in arr)
+            {
+                _logger.LogInformation("{}", a);
+            }
+            _logger.LogInformation("{}", Directory.GetFiles(_config.RootPath));
             return new List<MediaFile>();
         }
 
