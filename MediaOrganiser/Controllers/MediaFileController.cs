@@ -53,7 +53,6 @@ namespace MediaOrganiser.Controllers
                 {
                     return new NoContentResult();
                 }
-                _logger.LogInformation("We've arrived at the LINQ.");
                 mediaFilesList = mediaFilesList
                         .Where(mediaFile => fileNames == null || fileNameList.Contains(mediaFile.Name))
                         .Where(mediaFile => extensions == null || fileNameList.Contains(mediaFile.Name.Split(".")[1]))
@@ -62,20 +61,16 @@ namespace MediaOrganiser.Controllers
                         .Where(mediaFile => maxDate == null || mediaFile.DateCreated < maxDate)
                         .ToList();
                     mediaFilesList = SortList(mediaFilesList, sort);
-                    _logger.LogInformation("{}", mediaFilesList.Count);
                     return mediaFilesList.Count < 1 ? new NoContentResult() : new OkObjectResult(mediaFilesList);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                _logger.LogInformation("{}", e);
                 return new BadRequestObjectResult(e);
             }
         }
 
         private List<MediaFile> SortList(List<MediaFile> theList, Sort sort)
         {
-            _logger.LogInformation("SSSSSSooooorting!!!!");
             switch (sort)
             {
                 case Sort.NameAsc:
@@ -89,7 +84,6 @@ namespace MediaOrganiser.Controllers
 
         private string GetMediaFilePropertyForSort(MediaFile mediaFile, Sort sort)
         {
-            _logger.LogInformation("Getting PPPPPrrrooooperty!!!!!!");
             switch (sort)
             {
                 case Sort.NameAsc:
