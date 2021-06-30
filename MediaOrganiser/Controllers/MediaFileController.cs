@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MediaOrganiser.Config;
@@ -40,13 +41,61 @@ namespace MediaOrganiser.Controllers
             [FromQuery] string directories, [FromQuery] DateTime? minDate, [FromQuery] DateTime? maxDate, 
             [FromQuery] Sort sort)
         {
-            List<MediaFile> mediaFilesList = _service.GetAllMediaFiles(fileNames, extensions, directories, minDate, maxDate, sort);
-            if (mediaFilesList.Count < 1)
+            List<string> fileNameList = new List<string>((fileNames ?? "").Split(","));
+            List<string> directoryList = new List<String>((directories ?? "").Split(","));
+            List<string> extensionList = new List<String>((directories ?? "").Split(","));
+            try
             {
-                return new NoContentResult();
-            }
+                List<MediaFile> mediaFilesList =
+                    _service.GetAllMediaFiles(fileNames, extensions, directories, minDate, maxDate, sort);
 
-            return new OkObjectResult(mediaFilesList);
+                if (mediaFilesList.Count < 1)
+                {
+                    return new NoContentResult();
+                }
+                else
+                {
+                    mediaFilesList = mediaFilesList
+                        .Where(mediaFile => fileNames == null || fileNameList.Contains(mediaFile.Name))
+                        .Where(mediaFile => extensions == null || fileNameList.Contains(mediaFile.Name.Split(".")[1]))
+                        .Where(mediaFile => directories == null || fileNameList.Contains(mediaFile.Path))
+                        .Where(mediaFile => minDate == null || mediaFile.DateCreated > minDate)
+                        .Where(mediaFile => maxDate == null || mediaFile.DateCreated < maxDate)
+                        .ToList();
+                    mediaFilesList = SortList(mediaFilesList, sort);
+                    return mediaFilesList.Count < 1 ? new NoContentResult() : new OkObjectResult(mediaFilesList);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                _logger.LogInformation("{}", e);
+                return new BadRequestObjectResult(e);
+            }
+        }
+
+        private List<MediaFile> SortList(List<MediaFile> theList, Sort sort)
+        {
+            switch (sort)
+            {
+                case Sort.NameAsc:
+                case Sort.DateAsc:
+                    return theList.OrderBy(mediaFile => GetMediaFilePropertyForSort(mediaFile, sort)).ToList(); 
+                default:
+                    return theList.OrderByDescending(mediaFile => GetMediaFilePropertyForSort(mediaFile, sort))
+                        .ToList();
+            }
+        }
+
+        private string GetMediaFilePropertyForSort(MediaFile mediaFile, Sort sort)
+        {
+            switch (sort)
+            {
+                case Sort.NameAsc:
+                case Sort.DateDesc:
+                    return mediaFile.Name;
+                default: return mediaFile.DateCreated == null ? "" : mediaFile.DateCreated.Value.ToString("0");
+            }
         }
 
         [HttpDelete]

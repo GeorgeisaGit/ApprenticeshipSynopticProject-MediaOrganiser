@@ -33,6 +33,7 @@ namespace MediaOrganiser
             //Adding the new DateTimeModelBinder allows for ISO date and time format.
             services.AddControllers(options => 
                 options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider()));
+            //Add configuration section to the Configuration object, for use with IOptions<> pattern.
             services.Configure<RootDirectoryOptions>(options =>
                 Configuration.GetSection("RootDirectory").Bind(options));
             services.AddSingleton<MediaService>();

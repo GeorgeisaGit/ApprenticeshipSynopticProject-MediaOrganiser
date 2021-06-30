@@ -16,16 +16,36 @@ namespace MediaOrganiser.Repository
             _logger = logger;
             _config = config.Value;
         }
+        /// <summary>
+        /// This method uses the System.IO library to retrieve files from the path defined within AppSettings.Json
+        /// RootDirectory block.
+        /// </summary>
+        /// <returns>List<MediaFile></returns>
         public List<MediaFile> GetAllMediaFiles()
         {
-            _logger.LogInformation("{}", _config.RootPath);
-            var arr = Directory.GetFiles(_config.RootPath);
-            foreach (var a in arr)
+            List<MediaFile> mediaFileList = new List<MediaFile>();
+            var returnedFiles = Directory.GetFiles(_config.RootPath);
+            foreach (var file in returnedFiles)
             {
-                _logger.LogInformation("{}", a);
+                if (Path.GetFileName(file).StartsWith("."))
+                {
+                    _logger.LogInformation("Hidden file found, removing from program.");
+                }
+                else
+                {
+                    mediaFileList.Add(ConvertToMediaFile(file));
+                }
             }
-            _logger.LogInformation("{}", Directory.GetFiles(_config.RootPath));
-            return new List<MediaFile>();
+            return mediaFileList;
+        }
+
+        private MediaFile ConvertToMediaFile(string file)
+        {
+            MediaFile result = new MediaFile(_config);
+            result.Name = Path.GetFileName(file);
+            result.DateCreated = File.GetCreationTime(file);
+            _logger.LogInformation("{} | {} | {}", result.Name, result.DateCreated,result.Path);
+            return result;
         }
 
         public bool DeleteMediaFiles(List<string> FQNs)
