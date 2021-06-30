@@ -65,6 +65,7 @@ namespace MediaOrganiser.Controllers
             }
             catch (Exception e)
             {
+                //TODO: Change BadRequestObjectResults to ServerInternalError and return message not whole exception.
                 return new BadRequestObjectResult(e);
             }
         }
