@@ -35,7 +35,7 @@ namespace MediaOrganiser.Controllers
         /// <param name="minDate">Retrieve all media files after this date, provided in format yyyy-MM-ddThh:mm:ss.SSSZ.</param>
         /// <param name="maxDate">Retrieve all media files before this date, provided in format yyyy-MM-ddThh:mm:ss.SSSZ.</param>
         /// <param name="sort">NameAsc (0) is default, other values are NameDesc (1), DateAsc (2), DateDesc (3)</param>
-        /// <returns>Returns a list of files if content is found, returns 204: No Content if no content found.</returns>
+        /// <returns>Returns a 200: OK Result with list of files if content is found, returns 204: No Content if no content found.</returns>
         [HttpGet]
         public IActionResult Get([FromQuery]string fileNames, [FromQuery] string extensions, 
             [FromQuery] string directories, [FromQuery] DateTime? minDate, [FromQuery] DateTime? maxDate, 
@@ -68,7 +68,7 @@ namespace MediaOrganiser.Controllers
                 return new BadRequestObjectResult(e);
             }
         }
-
+        
         private List<MediaFile> SortList(List<MediaFile> theList, Sort sort)
         {
             switch (sort)
@@ -92,11 +92,15 @@ namespace MediaOrganiser.Controllers
                 default: return mediaFile.DateCreated == null ? "" : mediaFile.DateCreated.Value.ToString("0");
             }
         }
-        
+        /// <summary>
+        /// Call this method to delete media files from the root directory and sub directories.
+        /// </summary>
+        /// <param name="fileNames">A csv list of file names to delete from the root directory.</param>
+        /// <returns>200 OK if 1 or more files are deleted. 204 No Content if no files deleted.</returns>
         [HttpDelete]
-        public IActionResult Delete([FromQuery] string FQNs)
+        public IActionResult Delete([FromQuery] string fileNames)
         {
-            return _service.DeleteMediaFiles(FQNs);
+            return _service.DeleteMediaFiles(fileNames);
         }
     }
 }
