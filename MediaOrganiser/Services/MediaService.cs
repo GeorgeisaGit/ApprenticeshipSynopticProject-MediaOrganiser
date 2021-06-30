@@ -19,7 +19,7 @@ namespace MediaOrganiser.Services
             _logger = logger;
             _repo = repo;
         }
-
+        
         public List<MediaFile> GetAllMediaFiles(string fileNames, string extensions, string directories,
             DateTime? minDate, DateTime? maxDate, Sort sorting)
         {

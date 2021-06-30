@@ -68,7 +68,7 @@ namespace MediaOrganiser.Controllers
                 return new BadRequestObjectResult(e);
             }
         }
-        
+        //This method is called to sort the passed in List<MediaFile>.
         private List<MediaFile> SortList(List<MediaFile> theList, Sort sort)
         {
             switch (sort)
@@ -81,7 +81,7 @@ namespace MediaOrganiser.Controllers
                         .ToList();
             }
         }
-
+        //This method is called by SortList() to retrieve the MediaFile property on which to sort.
         private string GetMediaFilePropertyForSort(MediaFile mediaFile, Sort sort)
         {
             switch (sort)

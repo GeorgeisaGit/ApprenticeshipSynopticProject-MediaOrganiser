@@ -50,15 +50,15 @@ namespace MediaOrganiser.Repository
             return result;
         }
 
-        public bool DeleteMediaFiles(List<string> FQNs)
+        public bool DeleteMediaFiles(List<string> fileNames)
         {
             _logger.LogInformation("Getting to delete in repo.");
             var firstFileCount = Directory.GetFiles(_config.RootPath).Length;
-            foreach (string filePath in FQNs)
+            foreach (string fileName in fileNames)
             {
                 try
                 {
-                    File.Delete(filePath);
+                    File.Delete(_config.RootPath + fileName);
                 }
                 catch (Exception e)
                 {
