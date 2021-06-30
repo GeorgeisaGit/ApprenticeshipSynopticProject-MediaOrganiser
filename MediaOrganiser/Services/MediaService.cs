@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using MediaOrganiser.Config;
 using MediaOrganiser.Models;
@@ -28,16 +29,28 @@ namespace MediaOrganiser.Services
             return theList;
         }
 
-        public IActionResult DeleteMediaFiles(string FQNs)
+        public IActionResult DeleteMediaFiles(List<string> fileNames)
         {
             try
             {
-                List<string> fqnList = new List<string>((FQNs ?? "").Split(","));
-                return _repo.DeleteMediaFiles(fqnList) == false ? new NoContentResult() : new OkResult();
+                return _repo.DeleteMediaFiles(fileNames) == false ? new NoContentResult() : new OkResult();
             }
             catch (Exception e)
             {
                 return new BadRequestObjectResult(e);
+            }
+        }
+
+        public List<MediaDirectory> GetMediaDirectory(List<string> directories)
+        {
+            try
+            {
+                return _repo.GetMediaDirectory(directories);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("{}", e);
+                return new List<MediaDirectory>();
             }
         }
     }

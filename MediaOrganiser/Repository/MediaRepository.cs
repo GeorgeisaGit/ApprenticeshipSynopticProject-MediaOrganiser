@@ -40,7 +40,7 @@ namespace MediaOrganiser.Repository
             }
             return mediaFileList;
         }
-
+        //Use this method to create a MediaFile object for a file, from it's path.
         private MediaFile ConvertToMediaFile(string file)
         {
             MediaFile result = new MediaFile(_config);
@@ -66,6 +66,14 @@ namespace MediaOrganiser.Repository
                 }
             }
             return firstFileCount > Directory.GetFiles(_config.RootPath).Length;
+        }
+
+        public List<MediaDirectory> GetMediaDirectory(List<string> directories)
+        {
+            foreach (string directory in directories)
+            {
+                _logger.LogInformation(Directory.GetDirectories(_config.RootPath, directory).ToString());
+            }
         }
     }
 }

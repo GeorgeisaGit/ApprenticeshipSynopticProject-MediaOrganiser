@@ -100,7 +100,8 @@ namespace MediaOrganiser.Controllers
         [HttpDelete]
         public IActionResult Delete([FromQuery] string fileNames)
         {
-            return _service.DeleteMediaFiles(fileNames);
+            List<string> fileNameList = new List<string>((fileNames ?? "").Split(","));
+            return _service.DeleteMediaFiles(fileNameList);
         }
     }
 }
