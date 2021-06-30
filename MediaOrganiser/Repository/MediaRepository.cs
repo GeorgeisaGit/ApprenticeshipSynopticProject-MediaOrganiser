@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MediaOrganiser.Config;
 using MediaOrganiser.Models;
 using Microsoft.Extensions.Logging;
@@ -25,15 +27,15 @@ namespace MediaOrganiser.Repository
         {
             List<MediaFile> mediaFileList = new List<MediaFile>();
             var returnedFiles = Directory.GetFiles(_config.RootPath);
-            foreach (var file in returnedFiles)
+            foreach (var filePath in returnedFiles)
             {
-                if (Path.GetFileName(file).StartsWith("."))
+                if (Path.GetFileName(filePath).StartsWith("."))
                 {
                     _logger.LogInformation("Hidden file found, removing from program.");
                 }
                 else
                 {
-                    mediaFileList.Add(ConvertToMediaFile(file));
+                    mediaFileList.Add(ConvertToMediaFile(filePath));
                 }
             }
             return mediaFileList;
@@ -50,7 +52,19 @@ namespace MediaOrganiser.Repository
 
         public bool DeleteMediaFiles(List<string> FQNs)
         {
-            throw new System.NotImplementedException();
+            var firstFileCount = Directory.GetFiles(_config.RootPath).Length;
+            foreach (string filePath in FQNs)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Issue deleting a file. {}", e);
+                }
+            }
+            return firstFileCount < Directory.GetFiles(_config.RootPath).Length;
         }
     }
 }

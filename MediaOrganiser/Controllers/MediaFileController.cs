@@ -92,11 +92,11 @@ namespace MediaOrganiser.Controllers
                 default: return mediaFile.DateCreated == null ? "" : mediaFile.DateCreated.Value.ToString("0");
             }
         }
-
+        
         [HttpDelete]
-        public void Delete()
+        public IActionResult Delete([FromQuery] string FQNs)
         {
-            
+            return _service.DeleteMediaFiles(FQNs);
         }
     }
 }

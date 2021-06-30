@@ -27,5 +27,18 @@ namespace MediaOrganiser.Services
             _logger.LogInformation("{}", theList);
             return theList;
         }
+
+        public IActionResult DeleteMediaFiles(string FQNs)
+        {
+            try
+            {
+                List<string> fqnList = new List<string>((FQNs ?? "").Split(","));
+                return _repo.DeleteMediaFiles(fqnList) == false ? new NoContentResult() : new OkResult();
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(e);
+            }
+        }
     }
 }
