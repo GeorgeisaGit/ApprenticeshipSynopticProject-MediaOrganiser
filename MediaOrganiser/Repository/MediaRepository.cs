@@ -150,6 +150,7 @@ namespace MediaOrganiser.Repository
             var firstDirCount = Directory.GetDirectories(_config.RootPath).Length;
             foreach (string directory in directoryNames)
             {
+                //TODO:Extract code to private helper method.
                 try
                 {
                     string path = $"{_config.RootPath}{directory}";
