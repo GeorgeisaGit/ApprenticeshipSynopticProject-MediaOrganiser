@@ -59,7 +59,6 @@ namespace MediaOrganiser.Repository
         public bool DeleteMediaFile(List<string> fileNames)
         {
             //TODO: Ensure MediaFiles are removed from sub-directories as well as root folder.
-            _logger.LogInformation("Getting to delete in repo.");
             var firstFileCount = Directory.GetFiles(_config.RootPath).Length;
             foreach (string fileName in fileNames)
             {

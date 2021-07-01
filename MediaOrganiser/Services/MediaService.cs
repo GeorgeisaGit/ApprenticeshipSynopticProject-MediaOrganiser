@@ -34,15 +34,16 @@ namespace MediaOrganiser.Services
             }
         }
 
-        public IActionResult DeleteMediaFile(List<string> fileNames)
+        public bool DeleteMediaFile(List<string> fileNames)
         {
             try
             {
-                return _repo.DeleteMediaFile(fileNames) == false ? new NoContentResult() : new OkResult();
+                return _repo.DeleteMediaFile(fileNames);
             }
             catch (Exception e)
             {
-                return new BadRequestObjectResult(e);
+                _logger.LogError(e.Message);
+                return false;
             }
         }
 

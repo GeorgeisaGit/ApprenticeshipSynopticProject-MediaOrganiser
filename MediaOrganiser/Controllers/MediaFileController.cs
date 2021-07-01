@@ -101,8 +101,16 @@ namespace MediaOrganiser.Controllers
         [HttpDelete]
         public IActionResult Delete([FromQuery] string fileNames)
         {
-            List<string> fileNameList = new List<string>((fileNames ?? "").Split(","));
-            return _service.DeleteMediaFile(fileNameList);
+            try
+            {
+                List<string> fileNameList = new List<string>((fileNames ?? "").Split(","));
+                return _service.DeleteMediaFile(fileNameList) ? new OkResult() : StatusCode(500);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return StatusCode(500);
+            }
         }
     }
 }
