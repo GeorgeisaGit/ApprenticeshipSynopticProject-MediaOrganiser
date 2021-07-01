@@ -6,7 +6,7 @@ namespace MediaOrganiser.Repository
     public interface IMediaRepository
     {
         public List<MediaFile> GetAllMediaFiles();
-        public bool DeleteMediaFiles(List<string> fileNames);
+        public bool DeleteMediaFile(List<string> fileNames);
         List<MediaDirectory> GetMediaDirectory();
         bool CreateMediaDirectory(List<string> directoriesList);
     }

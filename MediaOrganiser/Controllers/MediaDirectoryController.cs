@@ -68,11 +68,16 @@ namespace MediaOrganiser.Controllers
                 return StatusCode(500);
             }
         }
-        
+        /// <summary>
+        /// Call this method to delete sub directories from the root directory.
+        /// </summary>
+        /// <param name="fileNames">A csv list of directory names to delete from the root directory.</param>
+        /// <returns>200 OK if 1 or more directories are deleted. 204 No Content if no directories deleted.</returns>
         [HttpDelete]
-        public IActionResult Delete()
+        public IActionResult Delete([FromQuery] string directoryNames)
         {
-            throw new NotImplementedException();
+            List<string> fileNameList = new List<string>((directoryNames ?? "").Split(","));
+            return _service.DeleteMediaDirectory(directoryNames);
         }
     }
 }

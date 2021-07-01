@@ -56,7 +56,7 @@ namespace MediaOrganiser.Repository
         /// </summary>
         /// <param name="fileNames">A list of file names, with file extension, to delete from the root directory.</param>
         /// <returns>True if one or more files from the list are deleted. False if no files deleted.</returns>
-        public bool DeleteMediaFiles(List<string> fileNames)
+        public bool DeleteMediaFile(List<string> fileNames)
         {
             //TODO: Ensure MediaFiles are removed from sub-directories as well as root folder.
             _logger.LogInformation("Getting to delete in repo.");
@@ -111,7 +111,6 @@ namespace MediaOrganiser.Repository
         /// <returns>True if one or more directories are created and false no directories are created.</returns>
         public bool CreateMediaDirectory(List<string> directoryList)
         {
-            //Make sure sub-directory does not already exist.
             List<MediaDirectory> directories = GetMediaDirectory();
             directoryList = RemoveExistingDirectoryNamesFromList(directoryList);
             foreach (string directoryName in directoryList)

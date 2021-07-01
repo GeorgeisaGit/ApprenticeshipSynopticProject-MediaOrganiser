@@ -34,11 +34,11 @@ namespace MediaOrganiser.Services
             }
         }
 
-        public IActionResult DeleteMediaFiles(List<string> fileNames)
+        public IActionResult DeleteMediaFile(List<string> fileNames)
         {
             try
             {
-                return _repo.DeleteMediaFiles(fileNames) == false ? new NoContentResult() : new OkResult();
+                return _repo.DeleteMediaFile(fileNames) == false ? new NoContentResult() : new OkResult();
             }
             catch (Exception e)
             {
@@ -70,6 +70,11 @@ namespace MediaOrganiser.Services
                 _logger.LogInformation("{}", e);
                 return false;
             }
+        }
+
+        public IActionResult DeleteMediaDirectory(string directoryNames)
+        {
+            throw new NotImplementedException();
         }
     }
 }
