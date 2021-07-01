@@ -69,15 +69,23 @@ namespace MediaOrganiser.Controllers
             }
         }
         /// <summary>
-        /// Call this method to delete sub directories from the root directory.
+        /// Call this method to delete sub directories from the root directory and copy the files back to the root directory.
         /// </summary>
         /// <param name="fileNames">A csv list of directory names to delete from the root directory.</param>
         /// <returns>200 OK if 1 or more directories are deleted. 204 No Content if no directories deleted.</returns>
         [HttpDelete]
         public IActionResult Delete([FromQuery] string directoryNames)
         {
-            List<string> fileNameList = new List<string>((directoryNames ?? "").Split(","));
-            return _service.DeleteMediaDirectory(directoryNames);
+            try
+            {
+                List<string> directoryNameList = new List<string>((directoryNames ?? "").Split(","));
+                return _service.DeleteMediaDirectory(directoryNameList) ? new OkResult() : StatusCode(500);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return StatusCode(500);
+            }
         }
     }
 }

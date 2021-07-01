@@ -73,9 +73,17 @@ namespace MediaOrganiser.Services
             }
         }
 
-        public IActionResult DeleteMediaDirectory(string directoryNames)
+        public bool DeleteMediaDirectory(List<string> directoryNames)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _repo.DeleteMediaDirectory(directoryNames);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return false;
+            }
         }
     }
 }

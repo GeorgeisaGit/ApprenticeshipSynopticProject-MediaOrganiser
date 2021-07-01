@@ -128,7 +128,7 @@ namespace MediaOrganiser.Repository
             int compare = GetMediaDirectory().Count;
             return directories.Count < compare;
         }
-
+        //CreateMediaDirectory() helper method.
         private List<string> RemoveExistingDirectoryNamesFromList(List<string> directoryList)
         {
             List<MediaDirectory> directories = GetMediaDirectory();
@@ -139,6 +139,33 @@ namespace MediaOrganiser.Repository
             }
 
             return directoryList;
+        }
+        /// <summary>
+        /// Call this method to delete directories from the root directory and copy contents back to root directory.
+        /// </summary>
+        /// <param name="directoryNames">A list of directory names to delete from the root directory.</param>
+        /// <returns>True if one or more directories from the list are deleted. False if no directories deleted.</returns>
+        public bool DeleteMediaDirectory(List<string> directoryNames)
+        {
+            var firstDirCount = Directory.GetDirectories(_config.RootPath).Length;
+            foreach (string directory in directoryNames)
+            {
+                try
+                {
+                    string path = $"{_config.RootPath}{directory}";
+                    foreach (var file in Directory.GetFiles(path))
+                    {
+                        string destinationFile = $"{_config.RootPath}{file.Split("/").Last()}";
+                        File.Move(file, destinationFile);
+                    }
+                    Directory.Delete(path);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Issue deleting a directory. {}", e);
+                }
+            }
+            return firstDirCount > Directory.GetDirectories(_config.RootPath).Length;
         }
     }
 }
