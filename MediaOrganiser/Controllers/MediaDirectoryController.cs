@@ -33,22 +33,46 @@ namespace MediaOrganiser.Controllers
         [HttpGet]
         public IActionResult Get([FromQuery] string directoryName)
         {
+            List<string> directoryList = new List<string>((directoryName ?? "").Split(","));
+            try 
+            { 
+                List<MediaDirectory> mediaDirectoryList = _service.GetMediaDirectory();
+                if (mediaDirectoryList.Count < 1)
+                { 
+                    return new NoContentResult();
+                }
+                mediaDirectoryList = mediaDirectoryList
+                                    .Where(mediaDirectory => directoryName == null || directoryList.Contains(mediaDirectory.Name))
+                                    .ToList();
+                return mediaDirectoryList.Count < 1 ? new NoContentResult() : new OkObjectResult(mediaDirectoryList);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return StatusCode(500);
+            }
+            
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromQuery] string directoryName)
+        {
             try
             {
                 List<string> directoriesList = new List<string>((directoryName ?? "").Split(","));
-                List<MediaDirectory> resultList = _service.GetMediaDirectory(directoriesList);
-                return resultList.Count < 1 ? new NoContentResult() : new OkObjectResult(resultList);
+                return _service.CreateMediaDirectory(directoriesList) ? new OkResult() : StatusCode(500);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult(e);
+                _logger.LogError(e.Message);
+                return StatusCode(500);
             }
         }
         
         [HttpDelete]
         public IActionResult Delete()
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace MediaOrganiser.Repository
     {
         public List<MediaFile> GetAllMediaFiles();
         public bool DeleteMediaFiles(List<string> fileNames);
-        List<MediaDirectory> GetMediaDirectory(List<string> directories);
+        List<MediaDirectory> GetMediaDirectory();
+        bool CreateMediaDirectory(List<string> directoriesList);
     }
 }

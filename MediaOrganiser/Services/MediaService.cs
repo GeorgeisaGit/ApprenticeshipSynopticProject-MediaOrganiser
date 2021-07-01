@@ -21,12 +21,17 @@ namespace MediaOrganiser.Services
             _repo = repo;
         }
         
-        public List<MediaFile> GetAllMediaFiles(string fileNames, string extensions, string directories,
-            DateTime? minDate, DateTime? maxDate, Sort sorting)
+        public List<MediaFile> GetAllMediaFiles()
         {
-            List<MediaFile> theList = _repo.GetAllMediaFiles();
-            _logger.LogInformation("{}", theList);
-            return theList;
+            try
+            {
+                return _repo.GetAllMediaFiles();
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("{}", e);
+                return new List<MediaFile>();
+            }
         }
 
         public IActionResult DeleteMediaFiles(List<string> fileNames)
@@ -41,16 +46,29 @@ namespace MediaOrganiser.Services
             }
         }
 
-        public List<MediaDirectory> GetMediaDirectory(List<string> directories)
+        public List<MediaDirectory> GetMediaDirectory()
         {
             try
             {
-                return _repo.GetMediaDirectory(directories);
+                return _repo.GetMediaDirectory();
             }
             catch (Exception e)
             {
                 _logger.LogInformation("{}", e);
                 return new List<MediaDirectory>();
+            }
+        }
+
+        public bool CreateMediaDirectory(List<string> directoriesList)
+        {
+            try
+            {
+                return _repo.CreateMediaDirectory(directoriesList);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("{}", e);
+                return false;
             }
         }
     }

@@ -47,7 +47,7 @@ namespace MediaOrganiser.Controllers
             try
             {
                 List<MediaFile> mediaFilesList =
-                    _service.GetAllMediaFiles(fileNames, extensions, directories, minDate, maxDate, sort);
+                    _service.GetAllMediaFiles();
 
                 if (mediaFilesList.Count < 1)
                 {
@@ -55,8 +55,8 @@ namespace MediaOrganiser.Controllers
                 }
                 mediaFilesList = mediaFilesList
                         .Where(mediaFile => fileNames == null || fileNameList.Contains(mediaFile.Name))
-                        .Where(mediaFile => extensions == null || fileNameList.Contains(mediaFile.Name.Split(".")[1]))
-                        .Where(mediaFile => directories == null || fileNameList.Contains(mediaFile.Path))
+                        .Where(mediaFile => extensions == null || extensionList.Contains(mediaFile.Name.Split(".")[1]))
+                        .Where(mediaFile => directories == null || directoryList.Contains(mediaFile.Path))
                         .Where(mediaFile => minDate == null || mediaFile.DateCreated > minDate)
                         .Where(mediaFile => maxDate == null || mediaFile.DateCreated < maxDate)
                         .ToList();
@@ -65,8 +65,8 @@ namespace MediaOrganiser.Controllers
             }
             catch (Exception e)
             {
-                //TODO: Change BadRequestObjectResults to ServerInternalError and return message not whole exception.
-                return new BadRequestObjectResult(e);
+                _logger.LogError(e.Message);
+                return StatusCode(500);
             }
         }
         //This method is called to sort the passed in List<MediaFile>.

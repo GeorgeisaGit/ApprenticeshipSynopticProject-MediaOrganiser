@@ -6,6 +6,7 @@ using MediaOrganiser.Config;
 using MediaOrganiser.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Any;
 
 namespace MediaOrganiser.Repository
 {
@@ -22,7 +23,7 @@ namespace MediaOrganiser.Repository
         /// This method uses the System.IO library to retrieve files from the path defined within AppSettings.Json
         /// RootDirectory block.
         /// </summary>
-        /// <returns>List<MediaFile></returns>
+        /// <returns>List of MediaFile containing MediaFiles, Empty list of MediaFile if nothing to retrieve.</returns>
         public List<MediaFile> GetAllMediaFiles()
         {
             List<MediaFile> mediaFileList = new List<MediaFile>();
@@ -40,18 +41,24 @@ namespace MediaOrganiser.Repository
             }
             return mediaFileList;
         }
+        
         //Use this method to create a MediaFile object for a file, from it's path.
-        private MediaFile ConvertToMediaFile(string file)
+        private MediaFile ConvertToMediaFile(string filePath)
         {
             MediaFile result = new MediaFile(_config);
-            result.Name = Path.GetFileName(file);
-            result.DateCreated = File.GetCreationTime(file);
-            _logger.LogInformation("{} | {} | {}", result.Name, result.DateCreated,result.Path);
+            result.Name = Path.GetFileName(filePath);
+            result.DateCreated = File.GetCreationTime(filePath);
             return result;
         }
-
+        
+        /// <summary>
+        /// Call this method to delete media files from the root directory and sub-directories.
+        /// </summary>
+        /// <param name="fileNames">A list of file names, with file extension, to delete from the root directory.</param>
+        /// <returns>True if one or more files from the list are deleted. False if no files deleted.</returns>
         public bool DeleteMediaFiles(List<string> fileNames)
         {
+            //TODO: Ensure MediaFiles are removed from sub-directories as well as root folder.
             _logger.LogInformation("Getting to delete in repo.");
             var firstFileCount = Directory.GetFiles(_config.RootPath).Length;
             foreach (string fileName in fileNames)
@@ -67,13 +74,73 @@ namespace MediaOrganiser.Repository
             }
             return firstFileCount > Directory.GetFiles(_config.RootPath).Length;
         }
-
-        public List<MediaDirectory> GetMediaDirectory(List<string> directories)
+        
+        /// <summary>
+        /// Call this method to get media directories from the root directory.
+        /// </summary>
+        /// <param name="directories">A list of directory names to retrieve from the root directory.</param>
+        /// <returns>List of Media directory. If no params, retrieve all sub-directories. Otherwise, return all directories that match the names provided.
+        /// Empty list if no directories found.</returns>
+        public List<MediaDirectory> GetMediaDirectory()
         {
-            foreach (string directory in directories)
+            List<MediaDirectory> mediaDirectoryList = new List<MediaDirectory>();
+
+            foreach (var directory in Directory.GetDirectories(_config.RootPath))
             {
-                _logger.LogInformation(Directory.GetDirectories(_config.RootPath, directory).ToString());
+                MediaDirectory resultDirectory = new MediaDirectory();
+                
+                resultDirectory.Name = directory.Split("/").Last();
+                
+                var fileArray = Directory.GetFiles($"{_config.RootPath}{resultDirectory.Name}");
+                foreach (string file in fileArray)
+                {
+                    if (file != "")
+                    {
+                        resultDirectory.Files.Add(ConvertToMediaFile(file));
+                    }
+                }
+                mediaDirectoryList.Add(resultDirectory);
             }
+            return mediaDirectoryList;
+        }
+        
+        /// <summary>
+        /// Call this method to create a sub directory within the root directory.
+        /// </summary>
+        /// <param name="directoriesList">A List of directory names to create.</param>
+        /// <returns>True if one or more directories are created and false no directories are created.</returns>
+        public bool CreateMediaDirectory(List<string> directoryList)
+        {
+            //Make sure sub-directory does not already exist.
+            List<MediaDirectory> directories = GetMediaDirectory();
+            directoryList = RemoveExistingDirectoryNamesFromList(directoryList);
+            foreach (string directoryName in directoryList)
+            {
+                try
+                {
+                    Directory.SetCurrentDirectory(_config.RootPath);
+                    Directory.CreateDirectory(directoryName);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                }
+            }
+
+            int compare = GetMediaDirectory().Count;
+            return directories.Count < compare;
+        }
+
+        private List<string> RemoveExistingDirectoryNamesFromList(List<string> directoryList)
+        {
+            List<MediaDirectory> directories = GetMediaDirectory();
+            foreach (var directory in directories)
+            {
+                directoryList.RemoveAll(dir => dir == directory.Name);
+                _logger.LogInformation("Removing {} from directories to create", directory.Name);
+            }
+
+            return directoryList;
         }
     }
 }
