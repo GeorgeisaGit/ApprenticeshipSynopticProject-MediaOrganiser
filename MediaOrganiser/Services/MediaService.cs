@@ -85,5 +85,27 @@ namespace MediaOrganiser.Services
                 return false;
             }
         }
+
+        public bool MoveFilesToDirectory(string directoryName, List<string> filePaths)
+        {
+            try
+            {
+                MediaDirectory mediaDir = new MediaDirectory {Name = directoryName};
+                foreach (string filePath in filePaths)
+                {
+                    if (filePath != "")
+                    {
+                        MediaFile file = _repo.ConvertToMediaFile(filePath);
+                        mediaDir.Files.Add(file);
+                    }
+                }
+                return _repo.MoveFilesToDirectory(mediaDir);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return false;
+            }
+        }
     }
 }

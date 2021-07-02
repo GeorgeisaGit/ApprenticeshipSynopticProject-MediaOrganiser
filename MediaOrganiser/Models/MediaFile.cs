@@ -17,7 +17,7 @@ namespace MediaOrganiser.Models
 
         public string GetFQN()
         {
-            return String.Concat(Path, "/", Name);
+            return String.Concat(Path, Name);
         }
     }
 }

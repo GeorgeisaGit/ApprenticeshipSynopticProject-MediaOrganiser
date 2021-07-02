@@ -13,7 +13,7 @@ namespace MediaOrganiser.Repository
     public class MediaRepository : IMediaRepository
     {
         private readonly ILogger<MediaRepository> _logger;
-        private RootDirectoryOptions _config;
+        private readonly RootDirectoryOptions _config;
         public MediaRepository(ILogger<MediaRepository> logger, IOptions<RootDirectoryOptions> config)
         {
             _logger = logger;
@@ -43,7 +43,7 @@ namespace MediaOrganiser.Repository
         }
         
         //Use this method to create a MediaFile object for a file, from it's path.
-        private MediaFile ConvertToMediaFile(string filePath)
+        public MediaFile ConvertToMediaFile(string filePath)
         {
             MediaFile result = new MediaFile(_config);
             result.Name = Path.GetFileName(filePath);
@@ -135,7 +135,7 @@ namespace MediaOrganiser.Repository
             foreach (var directory in directories)
             {
                 directoryList.RemoveAll(dir => dir == directory.Name);
-                _logger.LogInformation("Removing {} from directories to create", directory.Name);
+                _logger.LogInformation("Removing existing directory {} from directoryList", directory.Name);
             }
 
             return directoryList;
@@ -167,6 +167,55 @@ namespace MediaOrganiser.Repository
                 }
             }
             return firstDirCount > Directory.GetDirectories(_config.RootPath).Length;
+        }
+        
+        /// <summary>
+        /// Call this method to move files to sub directories from the root directory. Sub-directory will be created if it does not exist.
+        /// </summary>
+        /// <param name="directory">A MediaDirectory object populated with required values.</param>
+        /// <returns>True if media directory contains 1 or more of the files requested. False if no files are added.</returns>
+        public bool MoveFilesToDirectory(MediaDirectory directory)
+        {
+            if (!CheckMediaDirectoryExists(directory))
+            {
+                try
+                {
+                    List<string> directoryToCreateAsList = new List<string>();
+                    directoryToCreateAsList.Add(directory.Name);
+                    CreateMediaDirectory(directoryToCreateAsList);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                    return false;
+                }
+            }
+            foreach (MediaFile file in directory.Files)
+            {
+                try
+                {
+                    var fqn = file.GetFQN();
+                    File.Move(fqn, $"{_config.RootPath}{directory.Name}/{file.Name}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                }
+            }
+            return Directory.GetFiles($"{_config.RootPath}{directory.Name}/").Length >= 1;
+        }
+        
+        //MoveFilesToDirectory helper method. If directory is found, returns true else returns false.
+        private bool CheckMediaDirectoryExists(MediaDirectory directory)
+        {
+            List<MediaDirectory> existingDirectories = GetMediaDirectory();
+            List<string> existingDirectoryNames = new List<string>();
+            foreach (MediaDirectory existingDirectory in existingDirectories)
+            {
+                existingDirectoryNames.Add(existingDirectory.Name);
+            }
+
+            return existingDirectoryNames.Contains(directory.Name);
         }
     }
 }

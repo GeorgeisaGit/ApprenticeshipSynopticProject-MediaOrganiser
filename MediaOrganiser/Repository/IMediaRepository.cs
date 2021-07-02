@@ -10,5 +10,7 @@ namespace MediaOrganiser.Repository
         List<MediaDirectory> GetMediaDirectory();
         bool CreateMediaDirectory(List<string> directoriesList);
         bool DeleteMediaDirectory(List<string> directoryNames);
+        bool MoveFilesToDirectory(MediaDirectory directory);
+        MediaFile ConvertToMediaFile(string filePath);
     }
 }
