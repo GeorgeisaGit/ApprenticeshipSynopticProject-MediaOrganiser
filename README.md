@@ -39,7 +39,7 @@ How to call the endpoints:
 * You can use curl -v -X DELETE|PUT|POST "appURL" to send another kind of HTTP request from your command line terminal.
 
 
-#Introduction
+# Introduction
 
 This document is designed to outline the requirements and design relating to the SDT Project A: Media Organiser.<br>
 I have been provided with the following UML Class Diagram and Use-Case. I will be creating my own versions of these to better describe the solution.<br>
@@ -51,7 +51,7 @@ I have been provided with the following UML Class Diagram and Use-Case. I will b
 
 I plan to create a web API backend and, if possible, an example front-end for this web API.
 
-#Requirements
+# Requirements
 
 Functional Requirements:
 
@@ -86,7 +86,7 @@ Please view the UML Class Diagram below for a clear view of the class architectu
 
 ![UML Diagram](MediaOrganiser/FilesForMarkdown/WebAPIClassDiagram.png)
 
-#Endpoints
+# Endpoints
 Please run the application and refer to the Swagger UI (deployed on startup but if not reachable through localhost:5000/Swagger.index.html).
 The UI has taken an XML document produced through /// comments in source code and appended them to relevant action methods. You can slo try out the endpoints using the Swagger UI.<br>
 <br>
