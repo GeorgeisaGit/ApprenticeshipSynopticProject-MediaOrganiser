@@ -11,6 +11,8 @@ System Requirements:<br>
 * .Net 5 SDK.
 
 Important Notices:<br>
+* Due to time constraints and a Code-Driven-Development approach. Automated testing of code like unit tests or integration tests have not been created. All
+  testing has been carried out using the Swagger UI and curl command.
 * The swagger UI is configured to utilise comments from the code into meaningful annotations to the 
 action methods available for MediaFile and MediaDirectory endpoints. The swagger UI is only deployed when
   the launchsettings.json ASPNETCOREENVIRONMENT environment variable is set to "Development".
