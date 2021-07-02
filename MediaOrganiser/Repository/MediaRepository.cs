@@ -52,7 +52,7 @@ namespace MediaOrganiser.Repository
         }
         
         /// <summary>
-        /// Call this method to delete media files from the root directory and sub-directories.
+        /// Call this method to delete media files from the root directory and sub directories.
         /// </summary>
         /// <param name="fileNames">A list of file names, with file extension, to delete from the root directory.</param>
         /// <returns>True if one or more files from the list are deleted. False if no files deleted.</returns>
@@ -75,11 +75,9 @@ namespace MediaOrganiser.Repository
         }
         
         /// <summary>
-        /// Call this method to get media directories from the root directory.
+        /// Call this method to get sub directories from the root directory.
         /// </summary>
-        /// <param name="directories">A list of directory names to retrieve from the root directory.</param>
-        /// <returns>List of Media directory. If no params, retrieve all sub-directories. Otherwise, return all directories that match the names provided.
-        /// Empty list if no directories found.</returns>
+        /// <returns>Returns all sub directories within the root directory. Empty list if no directories found.</returns>
         public List<MediaDirectory> GetMediaDirectory()
         {
             List<MediaDirectory> mediaDirectoryList = new List<MediaDirectory>();

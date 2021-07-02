@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace MediaOrganiser
 {
@@ -41,6 +42,8 @@ namespace MediaOrganiser
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "MediaOrganiser", Version = "v1"});
+                //Get/Set the path for xml comment file at Project -> Properties -> Debug Assembly -> Xml comments.
+                c.IncludeXmlComments(@"bin/Debug/net5.0/MediaOrganiser.xml");
             });
         }
 

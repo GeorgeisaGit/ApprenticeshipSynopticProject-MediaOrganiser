@@ -13,7 +13,6 @@ namespace MediaOrganiser.Models
         public string Name { get; set; }
         public DateTime? DateCreated { get; set; }
         public string Path { get; private set; }
-        public string Comment { get; set; }
 
         public string GetFQN()
         {
